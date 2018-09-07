@@ -1,26 +1,30 @@
 import numpy as np
 import cv2 as cv
 
-kernel_1 = np.ones((20, 20), dtype= np.uint8)
-kernel_1 = kernel_1/400
+def nothing(x):
+    pass
 
-cap = cv.VideoCapture(0)
-ret, frame = cap.read()
+image = cv.imread("gabriel.png", 0)
+cv.namedWindow('imagem borrada')
 
-while(True):
-    # Capture frame-by-frame
-    ret, frame = cap.read()
+#Cria barra de nivel de borramento
+cv.createTrackbar('level', 'imagem borrada', 0, 20, nothing)
 
-    # Converting to grayscale
-    frame_g = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+while(1):
 
-    new_frame = cv.filter2D(frame_g, -1, kernel_1)
+    level = cv.getTrackbarPos('level', 'imagem borrada')
+    print(level)
 
-    cv.imshow('Imagem original', new_frame)
+    if (level > 0):
+        kernel_1 = np.ones((level, level), dtype= np.uint8)
+        kernel_1 = kernel_1/(level*level)
+        image_2 = cv.filter2D(image, -1, kernel_1)
+        cv.imshow('imagem borrada', image_2)
+    else:
+        cv.imshow('imagem borrada', image)
+
+    cv.imshow('Imagem original', image)
 
     if cv.waitKey(1) & 0xFF == ord('q'):
         break
 
-# When everything done, release the capture
-cap.release()
-cv.destroyAllWindows()
